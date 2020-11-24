@@ -42,5 +42,19 @@ module.exports = {
         return responseStandard(res, 'phone number is not registered', {}, 400, false)
       }
     }
+  },
+  getFriend: async (req, res) => {
+    const iduser = req.user.id
+    const result = await friends.findAndCountAll({
+      where: {
+        userId: iduser
+      },
+      order: [['name', 'ASC']]
+    })
+    if (result) {
+      return responseStandard(res, 'list friend', { result })
+    } else {
+      return responseStandard(res, 'you have no friend', {}, 404, false)
+    }
   }
 }
