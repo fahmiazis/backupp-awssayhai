@@ -16,7 +16,8 @@ module.exports = (sequelize, DataTypes) => {
   message.init({
     content: DataTypes.STRING,
     recipient: DataTypes.STRING,
-    sender: DataTypes.STRING
+    sender: DataTypes.STRING,
+    isLatest: DataTypes.BOOLEAN
   }, {
     sequelize,
     modelName: 'message',

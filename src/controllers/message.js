@@ -14,16 +14,43 @@ module.exports = {
     if (error) {
       return responseStandard(res, 'Error', { error: error.message }, 401, false)
     } else {
-      const data = {
-        sender: iduser,
-        recipient: id,
-        content: results.content
-      }
-      const result = await message.create(data)
-      if (result) {
-        return responseStandard(res, 'success send message', { result })
+      const find = await message.findOne({
+        where: {
+          [Op.or]: [
+            { [Op.and]: [{ sender: iduser }, { recipient: id }] },
+            { [Op.and]: [{ sender: id }, { recipient: iduser }] }
+          ]
+        },
+        order: [['createdAt', 'DESC']]
+      })
+      if (find) {
+        const late = { isLatest: 0 }
+        find.update(late)
+        const data = {
+          sender: iduser,
+          recipient: id,
+          content: results.content,
+          isLatest: 1
+        }
+        const result = await message.create(data)
+        if (result) {
+          return responseStandard(res, 'success send message', { result, find })
+        } else {
+          return responseStandard(res, 'fail to send message', {}, 400, false)
+        }
       } else {
-        return responseStandard(res, 'fail to send message', {}, 400, false)
+        const data = {
+          sender: iduser,
+          recipient: id,
+          content: results.content,
+          isLatest: 1
+        }
+        const result = await message.create(data)
+        if (result) {
+          return responseStandard(res, 'success send message', { result })
+        } else {
+          return responseStandard(res, 'fail to send message', {}, 400, false)
+        }
       }
     }
   },
@@ -36,7 +63,8 @@ module.exports = {
           { [Op.and]: [{ sender: iduser }, { recipient: id }] },
           { [Op.and]: [{ sender: id }, { recipient: iduser }] }
         ]
-      }
+      },
+      order: [['createdAt', 'DESC']]
     })
     if (result) {
       return responseStandard(res, 'your message', { result })
@@ -50,30 +78,13 @@ module.exports = {
       order: [['createdAt', 'DESC']],
       where: {
         [Op.or]: [
-          { sender: iduser },
-          { recipient: iduser }
+          { [Op.and]: [{ sender: iduser }, { isLatest: 1 }] },
+          { [Op.and]: [{ recipient: iduser }, { isLatest: 1 }] }
         ]
-      },
-      group: ['sender', 'recipient']
+      }
     })
     if (result) {
-      const send = result.rows.map(item => {
-        return item.sender
-      })
-      const rec = result.rows.map(item => {
-        return item.recipient
-      })
-      const search = await message.findAndCountAll({
-        where: {
-          [Op.or]: [
-            { sender: send },
-            { recipient: rec }
-          ]
-        },
-        // limit: 1,
-        order: [['createdAt', 'DESC']]
-      })
-      return responseStandard(res, 'chat list', { result, search })
+      return responseStandard(res, 'chat list', { result })
     } else {
       return responseStandard(res, 'you have no message', {}, 400, false)
     }
