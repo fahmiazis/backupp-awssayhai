@@ -12,4 +12,4 @@ const storage = multer.diskStorage({
   }
 })
 
-module.exports = multer({ storage }).single('picture')
+module.exports = multer({ storage }).single('avatar')

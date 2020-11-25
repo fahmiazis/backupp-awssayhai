@@ -73,5 +73,16 @@ module.exports = {
     } else {
       return responseStandard(res, 'data not found', {}, 400, false)
     }
+  },
+  upload: async (req, res) => {
+    const id = req.user.id
+    const picture = { avatar: `/uploads/${req.file.filename}` }
+    const result = await user.findByPk(id)
+    if (result) {
+      result.update(picture)
+      return responseStandard(res, 'update image succesfully', { image: result.picture })
+    } else {
+      return responseStandard(res, 'update image failed', {}, 400, false)
+    }
   }
 }

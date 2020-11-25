@@ -12,10 +12,10 @@ module.exports = {
         type: Sequelize.STRING
       },
       recipient: {
-        type: Sequelize.STRING
+        type: Sequelize.INTEGER
       },
       sender: {
-        type: Sequelize.STRING
+        type: Sequelize.INTEGER
       },
       isLatest: {
         type: Sequelize.BOOLEAN
