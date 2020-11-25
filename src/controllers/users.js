@@ -16,7 +16,12 @@ module.exports = {
     } else {
       const result = await user.findOne({ where: { phone: results.phone } })
       if (result) {
-        return responseStandard(res, 'email already used', {}, 400, false)
+        const { id, phone } = result
+        jwt.sign({ id: id }, `${APP_KEY}`, {
+          expiresIn: '7d'
+        }, (_err, token) => {
+          return responseStandard(res, 'Login succesfully', { phone: phone, Token: `${token}` })
+        })
       } else {
         const result = await user.create(results)
         if (result) {
