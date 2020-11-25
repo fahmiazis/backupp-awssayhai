@@ -49,7 +49,10 @@ module.exports = {
       where: {
         userId: iduser
       },
-      order: [['name', 'ASC']]
+      order: [['name', 'ASC']],
+      include: [
+        { model: user, as: 'friend' }
+      ]
     })
     if (result) {
       return responseStandard(res, 'list friend', { result })
