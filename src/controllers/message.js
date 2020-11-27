@@ -3,6 +3,7 @@ const joi = require('joi')
 const responseStandard = require('../helpers/response')
 const { Op } = require('sequelize')
 const qs = require('querystring')
+const io = require('../App')
 
 module.exports = {
   sendMessage: async (req, res) => {
@@ -34,6 +35,7 @@ module.exports = {
           isLatest: 1
         }
         const result = await message.create(data)
+        io.emit(data.recipient, { iduser, message: results.content })
         if (result) {
           return responseStandard(res, 'success send message', { result, find })
         } else {

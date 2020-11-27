@@ -2,6 +2,8 @@ const joi = require('joi')
 const jwt = require('jsonwebtoken')
 const responseStandard = require('../helpers/response')
 const { user } = require('../models')
+const { Op } = require('sequelize')
+const qs = require('querystring')
 
 const { APP_KEY } = process.env
 
@@ -83,6 +85,57 @@ module.exports = {
       return responseStandard(res, 'update image succesfully', { image: result.picture })
     } else {
       return responseStandard(res, 'update image failed', {}, 400, false)
+    }
+  },
+  getAllUser: async (req, res) => {
+    let { search, limit, page } = req.query
+    let searchValue = ''
+    if (typeof search === 'object') {
+      searchValue = Object.values(search)[0]
+    } else {
+      searchValue = search || ''
+    }
+    if (!limit) {
+      limit = 5
+    } else {
+      limit = parseInt(limit)
+    }
+    if (!page) {
+      page = 1
+    } else {
+      page = parseInt(page)
+    }
+    const result = await user.findAndCountAll({
+      where: {
+        [Op.or]: [
+          [{ phone: `${searchValue}` }],
+          [{ name: `${searchValue}` }]
+        ]
+      },
+      limit: limit,
+      offset: (page - 1) * limit
+    })
+    const pageInfo = {
+      count: result.count,
+      pages: 0,
+      currentPage: page,
+      limitPerPage: limit,
+      nextLink: null,
+      prevLink: null
+    }
+    pageInfo.pages = Math.ceil(result.count / limit)
+
+    const { pages, currentPage } = pageInfo
+    if (currentPage < pages) {
+      pageInfo.nextLink = `http://54.147.40.208:6060/news?${qs.stringify({ ...req.query, ...{ page: page + 1 } })}`
+    }
+    if (currentPage > 1) {
+      pageInfo.prevLink = `http://54.147.40.208:6060/news?${qs.stringify({ ...req.query, ...{ page: page - 1 } })}`
+    }
+    if (result) {
+      responseStandard(res, 'search result', { data: result })
+    } else {
+      responseStandard(res, 'phone not found', {}, 400, false)
     }
   }
 }
