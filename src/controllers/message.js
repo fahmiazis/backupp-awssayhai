@@ -92,10 +92,10 @@ module.exports = {
 
     const { pages, currentPage } = pageInfo
     if (currentPage < pages) {
-      pageInfo.nextLink = `http://54.147.40.208:6060/news?${qs.stringify({ ...req.query, ...{ page: page + 1 } })}`
+      pageInfo.nextLink = `http://54.147.40.208:8585/chat/receive/detail/${id}?${qs.stringify({ ...req.query, ...{ page: page + 1 } })}`
     }
     if (currentPage > 1) {
-      pageInfo.prevLink = `http://54.147.40.208:6060/news?${qs.stringify({ ...req.query, ...{ page: page - 1 } })}`
+      pageInfo.prevLink = `http://54.147.40.208:8585/chat/receive/detail/${id}?${qs.stringify({ ...req.query, ...{ page: page - 1 } })}`
     }
     if (result) {
       return responseStandard(res, 'your message', { result, pageInfo })
@@ -107,7 +107,7 @@ module.exports = {
     const iduser = req.user.id
     let { limit, page } = req.query
     if (!limit) {
-      limit = 10
+      limit = 7
     } else {
       limit = parseInt(limit)
     }
@@ -143,10 +143,10 @@ module.exports = {
 
     const { pages, currentPage } = pageInfo
     if (currentPage < pages) {
-      pageInfo.nextLink = `http://54.147.40.208:6060/news?${qs.stringify({ ...req.query, ...{ page: page + 1 } })}`
+      pageInfo.nextLink = `http://54.147.40.208:8585/chat/receive?${qs.stringify({ ...req.query, ...{ page: page + 1 } })}`
     }
     if (currentPage > 1) {
-      pageInfo.prevLink = `http://54.147.40.208:6060/news?${qs.stringify({ ...req.query, ...{ page: page - 1 } })}`
+      pageInfo.prevLink = `http://54.147.40.208:8585/chat/receive?${qs.stringify({ ...req.query, ...{ page: page - 1 } })}`
     }
     if (result) {
       return responseStandard(res, 'chat list', { result, pageInfo })
