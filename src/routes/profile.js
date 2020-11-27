@@ -6,5 +6,6 @@ route.patch('/update', user.updateProfile)
 route.get('/', user.getProfile)
 route.get('/detail/:id', user.getProfileById)
 route.post('/avatar', upload, user.upload)
+route.post('/search', user.getAllUser)
 
 module.exports = route
