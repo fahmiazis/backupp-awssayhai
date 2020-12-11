@@ -16,26 +16,29 @@ module.exports = {
       const result = await user.findOne({ where: { phone: results.phone } })
       if (result) {
         const { id, phone } = result
-        console.log(id)
-        if (results.name) {
-          const data = {
-            userId: iduser,
-            name: results.name,
-            friendId: id
-          }
-          const result = await friends.create(data)
-          if (result) {
-            return responseStandard(res, 'add contact succesfully', { result })
-          }
+        if (id === iduser) {
+          return responseStandard(res, 'you cannot add yourself as a friend', {}, 400, false)
         } else {
-          const data = {
-            userId: iduser,
-            name: phone,
-            friendId: id
-          }
-          const result = await friends.create(data)
-          if (result) {
-            return responseStandard(res, 'add contact succesfully', { result })
+          if (results.name) {
+            const data = {
+              userId: iduser,
+              name: results.name,
+              friendId: id
+            }
+            const result = await friends.create(data)
+            if (result) {
+              return responseStandard(res, 'add contact succesfully', { result })
+            }
+          } else {
+            const data = {
+              userId: iduser,
+              name: phone,
+              friendId: id
+            }
+            const result = await friends.create(data)
+            if (result) {
+              return responseStandard(res, 'add contact succesfully', { result })
+            }
           }
         }
       } else {

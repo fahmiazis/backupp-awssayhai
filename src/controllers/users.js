@@ -88,6 +88,7 @@ module.exports = {
     }
   },
   getAllUser: async (req, res) => {
+    const idUser = req.user.id
     let { search, limit, page } = req.query
     let searchValue = ''
     if (typeof search === 'object') {
@@ -108,8 +109,11 @@ module.exports = {
     const result = await user.findAndCountAll({
       where: {
         [Op.or]: [
-          [{ phone: `${searchValue}` }],
-          [{ name: `${searchValue}` }]
+          { phone: { [Op.like]: `%${searchValue}%` } },
+          { name: { [Op.like]: `%${searchValue}%` } }
+        ],
+        [Op.not]: [
+          { id: idUser }
         ]
       },
       limit: limit,
