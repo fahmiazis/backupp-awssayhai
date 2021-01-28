@@ -97,7 +97,7 @@ module.exports = {
       searchValue = search || ''
     }
     if (!limit) {
-      limit = 5
+      limit = 20
     } else {
       limit = parseInt(limit)
     }
@@ -131,10 +131,10 @@ module.exports = {
 
     const { pages, currentPage } = pageInfo
     if (currentPage < pages) {
-      pageInfo.nextLink = `http://54.147.40.208:6060/news?${qs.stringify({ ...req.query, ...{ page: page + 1 } })}`
+      pageInfo.nextLink = `http://54.147.40.208:8585/user/search?${qs.stringify({ ...req.query, ...{ page: page + 1 } })}`
     }
     if (currentPage > 1) {
-      pageInfo.prevLink = `http://54.147.40.208:6060/news?${qs.stringify({ ...req.query, ...{ page: page - 1 } })}`
+      pageInfo.prevLink = `http://54.147.40.208:8585/user/search?${qs.stringify({ ...req.query, ...{ page: page - 1 } })}`
     }
     if (result) {
       responseStandard(res, 'search result', { data: result })
